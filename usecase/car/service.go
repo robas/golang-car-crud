@@ -31,3 +31,23 @@ func (s *Service) GetCar(id entity.ID) (*entity.Car, error) {
 
 	return c, nil
 }
+
+func (s *Service) ListCars() ([]*entity.Car, error) {
+
+	panic("implement me")
+}
+
+func (s *Service) SearchCars(query string) ([]*entity.Car, error) {
+	//TODO implement me
+	panic("implement me")
+}
+
+func (s *Service) UpdateCar(c *entity.Car) error {
+	//TODO implement me
+	panic("implement me")
+}
+
+func (s *Service) DeleteCar(id entity.ID) error {
+	//TODO implement me
+	panic("implement me")
+}

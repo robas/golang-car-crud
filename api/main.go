@@ -5,6 +5,8 @@ import (
 	"carProject/config"
 	"carProject/infrastructure/repository"
 	"carProject/usecase/car"
+	"database/sql"
+	"fmt"
 	_ "github.com/go-sql-driver/mysql"
 	"github.com/gorilla/context"
 	"github.com/gorilla/mux"
@@ -16,14 +18,14 @@ import (
 )
 
 func main() {
-	/*datasourceName := fmt.Sprintf("%s:%s@tcp(%s:3306)/%s?parseTime=true", config.DB_USER, config.DB_PASSWORD, config.DB_HOST, config.DB_DATABASE)
+	datasourceName := fmt.Sprintf("%s:%s@tcp(%s:3306)/%s?parseTime=true", config.DB_USER, config.DB_PASSWORD, config.DB_HOST, config.DB_DATABASE)
 	db, err := sql.Open("mysql", datasourceName)
 	if err != nil {
 		log.Fatal(err.Error())
 	}
 	defer db.Close()
-	carRepo := repository.NewCarMySQL(db)*/
-	carRepo := repository.NewInmem()
+	carRepo := repository.NewCarMySQL(db)
+	//carRepo := repository.NewInmem()
 	carService := car.NewService(carRepo)
 
 	r := mux.NewRouter()
@@ -43,7 +45,7 @@ func main() {
 		ErrorLog:     logger,
 	}
 
-	err := srv.ListenAndServe()
+	err = srv.ListenAndServe()
 	if err != nil {
 		log.Fatal(err.Error())
 	}

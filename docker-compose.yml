@@ -1,0 +1,20 @@
+version: "3"
+services:
+  web:
+    build: .
+    ports:
+      - "8080:8080"
+  mysql:
+    image: mariadb:10.5.8
+    command: --default-authentication-plugin=mysql_native_password --init-file /data/application/init.sql
+    volumes:
+      - ./ops/init.sql:/data/application/init.sql
+    environment:
+      MYSQL_ROOT_PASSWORD: car_crud_go
+      MYSQL_DATABASE: car_crud_go
+      MYSQL_USER: car_crud_go
+      MYSQL_PASSWORD: car_crud_go
+    ports:
+      - "3306:3306"
+    container_name: car-crud-go-mysql
+    network_mode: "bridge"
