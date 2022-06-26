@@ -47,3 +47,39 @@ func (repo *CarMySQL) Get(id entity.ID) (*entity.Car, error) {
 	}
 	return &c, nil
 }
+
+func (repo *CarMySQL) List() ([]*entity.Car, error) {
+	stmt, err := repo.db.Prepare("select id, brand, model, doorquantity from car")
+	if err != nil {
+		return nil, err
+	}
+	var c entity.Car
+	var cars []*entity.Car
+	rows, err := stmt.Query()
+	if err != nil {
+		return nil, err
+	}
+	for rows.Next() {
+		err = rows.Scan(&c.ID, &c.Brand, &c.Model, &c.DoorQuantity)
+		cars = append(cars, &c)
+	}
+	return cars, nil
+}
+
+func (repo *CarMySQL) Search(brand string) ([]*entity.Car, error) {
+	stmt, err := repo.db.Prepare("select id, brand, model, doorquantity, created_at from car where brand like ?")
+	if err != nil {
+		return nil, err
+	}
+	var c entity.Car
+	var cars []*entity.Car
+	rows, err := stmt.Query("%" + brand + "%")
+	if err != nil {
+		return nil, err
+	}
+	for rows.Next() {
+		err = rows.Scan(&c.ID, &c.Brand, &c.Model, &c.DoorQuantity, &c.CreatedAt)
+		cars = append(cars, &c)
+	}
+	return cars, nil
+}

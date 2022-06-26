@@ -1,6 +1,9 @@
 package car
 
-import "carProject/entity"
+import (
+	"carProject/entity"
+	"strings"
+)
 
 type Service struct {
 	repo Repository
@@ -33,13 +36,22 @@ func (s *Service) GetCar(id entity.ID) (*entity.Car, error) {
 }
 
 func (s *Service) ListCars() ([]*entity.Car, error) {
-
-	panic("implement me")
+	c, err := s.repo.List()
+	if err != nil {
+		return nil, err
+	}
+	return c, nil
 }
 
 func (s *Service) SearchCars(query string) ([]*entity.Car, error) {
-	//TODO implement me
-	panic("implement me")
+	cars, err := s.repo.Search(strings.ToLower(query))
+	if err != nil {
+		return nil, err
+	}
+	if len(cars) == 0 {
+		return nil, entity.ErrNotFound
+	}
+	return cars, nil
 }
 
 func (s *Service) UpdateCar(c *entity.Car) error {

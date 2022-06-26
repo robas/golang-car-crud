@@ -18,6 +18,7 @@ import (
 )
 
 func main() {
+	var err error
 	datasourceName := fmt.Sprintf("%s:%s@tcp(%s:3306)/%s?parseTime=true", config.DB_USER, config.DB_PASSWORD, config.DB_HOST, config.DB_DATABASE)
 	db, err := sql.Open("mysql", datasourceName)
 	if err != nil {

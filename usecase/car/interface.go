@@ -10,8 +10,8 @@ type Writer interface {
 
 type Reader interface {
 	Get(id entity.ID) (*entity.Car, error)
-	//Search(query string) ([]*entity.Car, error)
-	//List() ([]*entity.Car, error)
+	Search(query string) ([]*entity.Car, error)
+	List() ([]*entity.Car, error)
 }
 
 type Repository interface {

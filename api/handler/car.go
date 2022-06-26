@@ -88,9 +88,55 @@ func getCar(service car.UseCase) http.Handler {
 	})
 }
 
+func listCars(service car.UseCase) http.Handler {
+	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		errorMessage := "Error reading cars"
+		var data []*entity.Car
+		var err error
+		brand := r.URL.Query().Get("brand")
+
+		switch {
+		case brand == "":
+			data, err = service.ListCars()
+		default:
+			data, err = service.SearchCars(brand)
+		}
+		w.Header().Set("Content-Type", "application/json")
+		if err != nil && err != entity.ErrNotFound {
+			w.WriteHeader(http.StatusInternalServerError)
+			w.Write([]byte(errorMessage))
+			return
+		}
+
+		if data == nil {
+			w.WriteHeader(http.StatusNotFound)
+			w.Write([]byte(errorMessage))
+			return
+		}
+
+		var toJ []*presenter.Car
+		for _, c := range data {
+			toJ = append(toJ, &presenter.Car{
+				ID:           c.ID,
+				Brand:        c.Brand,
+				Model:        c.Model,
+				DoorQuantity: c.DoorQuantity,
+			})
+		}
+		if err := json.NewEncoder(w).Encode(toJ); err != nil {
+			w.WriteHeader(http.StatusInternalServerError)
+			w.Write([]byte(errorMessage))
+		}
+	})
+}
+
 func MakeCarHandlers(r *mux.Router, service car.UseCase) {
 	r.Handle("/v1/car", createCar(service)).
 		Methods("POST", "OPTIONS").Name("createCar")
+
 	r.Handle("/v1/car/{id}", getCar(service)).
 		Methods("GET", "OPTIONS").Name("getCar")
+
+	r.Handle("/v1/car", listCars(service)).
+		Methods("GET", "OPTIONS").Name("listCars")
 }
